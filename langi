@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# Programa para instalar proveedor de servicios de idiomas (lsp), solo para tenerlo a la mano :)
+
+### Source ###
+# https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+#############
+
+# read -p "Ingrese nombre de usuario: " username
+username="gerry"
+lib="/home/$username/.local/lib"
+cac="/home/$username/.cache"
+
+if [ "$EUID" -ne 0 ]; then
+    echo "Para que el programa funcione necesita permisos sudo"
+    exit
+fi
+
+case $1 in
+    javascript|js|typescript|ts) npm install -g typescript typescript-language-server ;;
+    c|cpp|c++|clang|clangd) pacman -S cmake clang llvm ;;
+    rs|rust) sudo -u "$username" curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+        rustup component add rls rust-analysis rust-src ;;
+    html|css) npm i -g vscode-langservers-extracted ;;
+    bash|sh) npm i -g bash-language-server ;;
+    lua) cd "$lib"
+        sudo -u "$username" git clone  --depth=1 https://github.com/sumneko/lua-language-server
+        cd lua-language-server
+        sudo -u "$username" git submodule update --depth 1 --init --recursive
+        cd 3rd/luamake
+        ./compile/install.sh
+        cd ../..
+        ./3rd/luamake/luamake rebuild ;;
+    java) pacman -S jre-openjdk
+        cd "$lib"; sudo -u "$username" mkdir -p jdt; cd jdt
+        sudo -u "$username" curl -LO https://download.eclipse.org/jdtls/snapshots/jdt-language-server-latest.tar.gz
+        sudo -u "$username" tar -xzvf jdt-language-server-latest.tar.gz
+        cd "$cac"; sudo -u "$username" mkdir -p jdtls ;;
+esac
