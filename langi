@@ -22,6 +22,7 @@ case $1 in
     rs|rust) sudo -u "$username" curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
         rustup component add rls rust-analysis rust-src ;;
     html|css) npm i -g vscode-langservers-extracted ;;
+    sass|scss) npm i -g sass ;;
     bash|sh) npm i -g bash-language-server ;;
     lua) cd "$lib"
         sudo -u "$username" git clone  --depth=1 https://github.com/sumneko/lua-language-server
